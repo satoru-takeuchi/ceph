@@ -23,6 +23,7 @@ import { AlertPanelComponent } from './alert-panel/alert-panel.component';
 import { BackButtonComponent } from './back-button/back-button.component';
 import { ConfigOptionComponent } from './config-option/config-option.component';
 import { ConfirmationModalComponent } from './confirmation-modal/confirmation-modal.component';
+import { Copy2ClipboardButtonComponent } from './copy2clipboard-button/copy2clipboard-button.component';
 import { CriticalConfirmationModalComponent } from './critical-confirmation-modal/critical-confirmation-modal.component';
 import { DateTimePickerComponent } from './date-time-picker/date-time-picker.component';
 import { DocComponent } from './doc/doc.component';
@@ -87,7 +88,8 @@ import { UsageBarComponent } from './usage-bar/usage-bar.component';
     TelemetryNotificationComponent,
     OrchestratorDocPanelComponent,
     DateTimePickerComponent,
-    DocComponent
+    DocComponent,
+    Copy2ClipboardButtonComponent
   ],
   providers: [],
   exports: [
@@ -110,7 +112,8 @@ import { UsageBarComponent } from './usage-bar/usage-bar.component';
     TelemetryNotificationComponent,
     OrchestratorDocPanelComponent,
     DateTimePickerComponent,
-    DocComponent
+    DocComponent,
+    Copy2ClipboardButtonComponent
   ]
 })
 export class ComponentsModule {}
