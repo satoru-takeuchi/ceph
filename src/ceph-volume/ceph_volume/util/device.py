@@ -106,11 +106,14 @@ class Device(object):
         self._parse()
         self.lsm_data = self.fetch_lsm()
 
-        self.available_lvm, self.rejected_reasons_lvm = self._check_lvm_reject_reasons()
-        self.available_raw, self.rejected_reasons_raw = self._check_raw_reject_reasons()
-        self.available = self.available_lvm and self.available_raw
-        self.rejected_reasons = list(set(self.rejected_reasons_lvm +
-                                         self.rejected_reasons_raw))
+        self.available_lvm_compat, self.rejected_reasons_lvm_compat = self._check_lvm_reject_reasons(True)
+        self.available_lvm, self.rejected_reasons_lvm = self._check_lvm_reject_reasons(False)
+        self.available_raw_compat, self.rejected_reasons_raw_compat = self._check_raw_reject_reasons(True)
+        self.available_raw, self.rejected_reasons_raw = self._check_raw_reject_reasons(False)
+
+        self.available = self.available_lvm_compat and self.available_raw_compat
+        self.rejected_reasons = list(set(self.rejected_reasons_lvm_compat +
+                                         self.rejected_reasons_raw_compat))
 
         self.device_id = self._get_device_id()
 
@@ -394,8 +397,32 @@ class Device(object):
         return False
 
     @property
-    def is_acceptable_device(self):
+    def is_mpath(self):
+        if self.disk_api:
+            return self.disk_api['TYPE'] == 'mpath'
+        elif self.blkid_api:
+            return self.blkid_api['TYPE'] == 'mpath'
+        return False
+
+    @property
+    def is_crypt(self):
+        if self.disk_api:
+            return self.disk_api['TYPE'] == 'crypt'
+        elif self.blkid_api:
+            return self.blkid_api['TYPE'] == 'crypt'
+        return False
+
+    @property
+    def is_acceptable_device_generic(self):
         return self.is_device or self.is_partition
+
+    @property
+    def is_acceptable_device_lvm(self):
+        return self.is_device or self.is_partition or self.is_mpath
+
+    @property
+    def is_acceptable_device_raw(self):
+        return self.is_device or self.is_partition or self.is_mpath or self.is_crypt
 
     @property
     def is_encrypted(self):
@@ -486,7 +513,7 @@ class Device(object):
 
         return rejected
 
-    def _check_lvm_reject_reasons(self):
+    def _check_lvm_reject_reasons(self, compat):
         rejected = []
         if self.vgs:
             available_vgs = [vg for vg in self.vgs if int(vg.vg_free_count) > 10]
@@ -496,13 +523,25 @@ class Device(object):
             # only check generic if no vgs are present. Vgs might hold lvs and
             # that might cause 'locked' to trigger
             rejected.extend(self._check_generic_reject_reasons())
+        if compat:
+            if not self.is_acceptable_device_generic:
+                rejected.append('Device type is not acceptable. It should be raw device or partition')
+        else:
+            if not self.is_acceptable_device_lvm:
+                rejected.append('Device type is not acceptable. It should be raw device, partition, or mpath')
 
         return len(rejected) == 0, rejected
 
-    def _check_raw_reject_reasons(self):
+    def _check_raw_reject_reasons(self, compat):
         rejected = self._check_generic_reject_reasons()
         if len(self.vgs) > 0:
             rejected.append('LVM detected')
+        if compat:
+            if not self.is_acceptable_device_generic:
+                rejected.append('Device type is not acceptable. It should be raw device or partition')
+        else:
+            if not self.is_acceptable_device_raw:
+                rejected.append('Device type is not acceptable. It should be raw device, partition, mpath, or crypt')
 
         return len(rejected) == 0, rejected
 

@@ -753,7 +753,7 @@ def get_devices(_sys_block_path='/sys/block'):
     for block in block_devs:
         devname = os.path.basename(block[0])
         diskname = block[1]
-        if block[2] not in ['disk', 'mpath']:
+        if block[2] not in ['disk', 'mpath', 'crypt']:
             continue
         sysdir = os.path.join(_sys_block_path, devname)
         metadata = {}
