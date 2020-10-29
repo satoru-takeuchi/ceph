@@ -120,7 +120,7 @@ class TestDevice(object):
         lsblk = {"TYPE": "disk"}
         device_info(devices=data, lsblk=lsblk)
         disk = device.Device("/dev/sda")
-        assert disk.is_device is True
+        assert disk.is_device
 
     def test_is_partition(self, device_info):
         data = {"/dev/sda1": {"foo": "bar"}}

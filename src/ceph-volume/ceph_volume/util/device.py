@@ -468,12 +468,9 @@ class Device(object):
         ]
         rejected = [reason for (k, v, reason) in reasons if
                     self.sys_api.get(k, '') == v]
-        if self.is_acceptable_device:
-            # reject disks smaller than 5GB
-            if int(self.sys_api.get('size', 0)) < 5368709120:
-                rejected.append('Insufficient space (<5GB)')
-        else:
-            rejected.append("Device type is not acceptable. It should be raw device or partition")
+        # reject disks smaller than 5GB
+        if int(self.sys_api.get('size', 0)) < 5368709120:
+            rejected.append('Insufficient space (<5GB)')
         if self.is_ceph_disk_member:
             rejected.append("Used by ceph-disk")
         if self.has_bluestore_label:
