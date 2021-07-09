@@ -9277,8 +9277,8 @@ retry:
       goto done;
     }
   }
-  if (f->flags & O_DIRECT)
-    have &= ~(CEPH_CAP_FILE_CACHE | CEPH_CAP_FILE_LAZYIO);
+//  if (f->flags & O_DIRECT)
+//    have &= ~(CEPH_CAP_FILE_CACHE | CEPH_CAP_FILE_LAZYIO);
 
   if (in->inline_version < CEPH_INLINE_NONE) {
     if (!(have & CEPH_CAP_FILE_CACHE)) {
@@ -9319,8 +9319,8 @@ retry:
     if (rc < 0)
       goto done;
   } else {
-    if (f->flags & O_DIRECT)
-      _flush_range(in, offset, size);
+//    if (f->flags & O_DIRECT)
+//      _flush_range(in, offset, size);
 
     bool checkeof = false;
     rc = _read_sync(f, offset, size, bl, &checkeof);
@@ -9723,8 +9723,8 @@ int64_t Client::_write(Fh *f, int64_t offset, uint64_t size, const char *buf,
     put_cap_ref(in, CEPH_CAP_AUTH_SHARED);
   }
 
-  if (f->flags & O_DIRECT)
-    have &= ~(CEPH_CAP_FILE_BUFFER | CEPH_CAP_FILE_LAZYIO);
+//  if (f->flags & O_DIRECT)
+//    have &= ~(CEPH_CAP_FILE_BUFFER | CEPH_CAP_FILE_LAZYIO);
 
   ldout(cct, 10) << " snaprealm " << *in->snaprealm << dendl;
 
@@ -9779,12 +9779,12 @@ int64_t Client::_write(Fh *f, int64_t offset, uint64_t size, const char *buf,
     // flush cached write if O_SYNC is set on file fh
     // O_DSYNC == O_SYNC on linux < 2.6.33
     // O_SYNC = __O_SYNC | O_DSYNC on linux >= 2.6.33
-    if ((f->flags & O_SYNC) || (f->flags & O_DSYNC)) {
-      _flush_range(in, offset, size);
+    //if ((f->flags & O_SYNC) || (f->flags & O_DSYNC)) {
+      // _flush_range(in, offset, size);
     }
   } else {
-    if (f->flags & O_DIRECT)
-      _flush_range(in, offset, size);
+    //if (f->flags & O_DIRECT)
+    //   _flush_range(in, offset, size);
 
     // simple, non-atomic sync write
     C_SaferCond onfinish("Client::_write flock");

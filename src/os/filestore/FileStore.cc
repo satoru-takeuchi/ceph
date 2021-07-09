@@ -259,9 +259,9 @@ int FileStore::lfn_open(const coll_t& cid,
 
   if (create)
     flags |= O_CREAT;
-  if (cct->_conf->filestore_odsync_write) {
-    flags |= O_DSYNC;
-  }
+//  if (cct->_conf->filestore_odsync_write) {
+//    flags |= O_DSYNC;
+//  }
 
   Index index2;
   if (!index) {

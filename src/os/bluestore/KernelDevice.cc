@@ -102,7 +102,7 @@ int KernelDevice::open(const string& p)
   dout(1) << __func__ << " path " << path << dendl;
 
   for (i = 0; i < WRITE_LIFE_MAX; i++) {
-    int fd = ::open(path.c_str(), O_RDWR | O_DIRECT);
+    int fd = ::open(path.c_str(), O_RDWR);
     if (fd  < 0) {
       r = -errno;
       break;
